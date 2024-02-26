@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body class="body-data">
+    <header>
+        <%- include('../partials/header') %>
+        
+    </header>
+    <main class="admin-cont">
+        <div class="sidebar">
+            <a id="addUserBtn"  href="/adduser" ><i class="fa-solid fa-user-plus"></i> Add User</a>
+            <a id="userListBtn" class="active" href="/userlist"  ><i class="fa-solid fa-users"></i> User List</a>
+        </div>
+
+        <div class="sidebar-small">
+            <a id="addUserBtn"  href="/adduser" ><i class="fa-solid fa-user-plus"></i></a>
+            <a id="userListBtn" class="active" href="/userlist"  ><i class="fa-solid fa-users"></i></a>
+        </div>
+        
+        <div class="second-nav">
+            <div class="nav2">
+                <h5><span><a href="/adduser">Admin</a></span> <span style="font-weight: 600;">></span> User list</h5>
+                <div class="nav2-bottom" style="display: flex; align-items: center;">
+                    <div class="nav2-title me-auto">
+                        <h1 style="margin-left: -2%;"> Active Users</h1>
+                    </div>
+                    <div class="nav2-import mt-2 ">
+                        <button onclick="syncData()" class="mid-screen"><i class="fa-solid fa-sync me-2" style="font-size: 15px;"></i>Sync Data</button>
+                        <button onclick="syncData()" class="small-screen"><i class="fa-solid fa-sync me-2" style="font-size: 15px;"></i>Sync</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="content">
+            <div id="userList">
+                <div class="user-list-header">
+                    
+                    <div class="user-list-bottom d-flex align-items-center">
+                        <div class="me-auto search-user">
+                            <form action="/searchuser" method="GET" style="width: 99%">
+                                <i class="fa fa-search" aria-hidden="true"></i><input type="text" name="search" placeholder="Search..." class="search-bar">
+                            </form>
+                        </div>
+                        <a href="#" id="filter-user" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" style="padding: 10px;">
+                            <i class="fa-solid fa-filter"></i> Filter
+                        </a>
+                        <button id="exportButton" onclick="exportFile()" style="padding: 10px;"><i class="fa-solid fa-file-csv"></i> Export</button>  
+
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <div class="d-flex align-items-end">
+                        <div class="me-auto rowcount">
+                            <h6>Active Users: <span id="rowCountNumber" ></span></h6>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button id="deleteSelectedBtn" class="btn btn-danger" onclick="deleteSelected()" style="display: none;">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div style="max-height: 400px; overflow-y: scroll;">
+                        <table class="user-list-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" class="mainbox" onclick="checkAllBoxes()">
+                                    </th>
+                                    <th>
+                                    Company
+                                    </th>
+                                    <th>
+                                     Email Address  
+                                    </th>
+                                    <th>
+                                     Password  
+                                    </th>
+                                    <th>
+                                        Action  
+                                    </th>
+        
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <% data.forEach((data) => { %>
+                                    <tr>
+                                        <td><input type="checkbox" class="delete-checkbox" onclick="showDeleteBtn()" data-id="<%= data._id %>"></td>
+                                        <td><%= data.id %></td>
+                                        <td><%= data.user %></td>
+                                        <td><%= data.pwd %></td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button 
+                                                    style="color: grey; background-color: transparent; border: none;" 
+                                                    class="edit-button"
+                                                    data-id="<%= data._id %>"
+                                                    data-username="<%= data.user %>"
+                                                    data-email="<%= data.pwd %>"
+                                                    data-companyid="<%= data.id %>"
+                                                    >
+                                                    <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+        
+                                    <div id="editModal-<%= data._id %>" class="modal editdata">
+                                        <div class="modal-content">
+                                            <span class="close" id="closeModal-<%= data._id %>">&times;</span>
+                                            <form id="editForm-<%= data._id %>" action="/admin/<%= data._id %>" method="POST">
+                                                <div class="mb-3">
+                                                    <label for="editCompanyId-<%= data._id %>">Company ID</label>
+                                                    <input type="text" class="form-control" id="editCompanyId-<%= data._id %>" name="id" value="<%= data.id %>" style="text-transform: uppercase;">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="editUsername-<%= data._id %>">Email Address</label>
+                                                    <input type="text" class="form-control" id="editUsername-<%= data._id %>" name="user" value="<%= data.user %>">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="editPwd-<%= data._id %>">Password</label>
+                                                    <input type="text" class="form-control" id="editPwd-<%= data._id %>" name="pwd" value="<%= data.pwd %>">
+                                                </div>
+                                                
+                                                <button type="submit" class="submitbtn" style="padding: 1%">Save</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                               <% }) %>
+                                
+        
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+    <%- include('../partials/footer') %>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header d-flex bd-highlight vertical-center">
+            <div class="me-auto bd-highlight">
+                <h3 id="offcanvasRightLabel" style="white-space: nowrap;" >Filter Users </h3>
+                
+            </div>
+            <div class="p-2 bd-highlight">
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="offcanvas-body">
+            <div >
+                <h5 style="margin-bottom: 3%;">Search Info</h5>
+                <div class="form-group mr-5">
+                    <label for="id">Company ID</label>
+                    <input type="text" class="form-control" id="id" placeholder="Search Company ID">
+                </div>
+                <div class="form-group mr-5">
+                    <label for="user">Email Address</label>
+                    <input type="text" class="form-control" id="user" placeholder="Search Email Address">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Password</label>
+                    <input type="text" class="form-control" id="pwd" placeholder="Search Password">
+                </div>
+        
+            <button class="submitbtn mt-4" onclick="filterTable()" data-bs-dismiss="offcanvas">Submit</button>
+        </div>
+    </div>
+
+    <script>
+
+        //--------------------------------- change sidebar --------------------------------
+
+        if(window.screen.width <= 600) {
+            document.querySelector(".sidebar").style.display = "none";
+            document.querySelector(".sidebar-small").style.display = "block";
+        }
+
+        //-------------------------------- sync data --------------------------------------
+
+        function syncData() {
+            fetch('/userlist')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json(); 
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    if (typeof data === 'string') {
+                        displayUpdatedData(data);
+                    } else {
+                        updateTableContent(data);
+                    }
+
+                    const rowCount = document.querySelectorAll('#tableBody tr').length;
+                    updateRowCount(rowCount);
+
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function displayUpdatedData(data) {
+            document.querySelector('.body-data').innerHTML = '';
+            document.querySelector('.body-data').innerHTML = data;
+        }
+
+        // initial row count
+        const rowCount = document.querySelectorAll('#tableBody tr').length;
+        updateRowCount(rowCount);
+
+        //--------------------------------filter-------------------------------------------
+
+        const filterTable = ()=>{
+            var visibleRowCount = 0;
+
+            const companyID = document.getElementById('id').value.toLowerCase();
+            const user = document.getElementById('user').value.toLowerCase();
+            const pwd = document.getElementById('pwd').value.toLowerCase();
+
+            var rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach(function(row){
+                var cells = row.getElementsByTagName('td');
+                var companyIDText = cells[1].textContent.toLowerCase();
+                var userText = cells[2].textContent.toLowerCase();
+                var pwdText = cells[3].textContent.toLowerCase();
+
+                const compareInput = (
+                    (companyID && companyIDText !== companyID) ||
+                    (user && userText !== user) ||
+                    (pwd && pwdText !== pwd)
+                );
+
+                if (compareInput){
+                    row.style.display = "none";
+                }
+                else{
+                    row.style.display = "";
+                    visibleRowCount++;
+                }
+
+            })
+
+            updateRowCount(visibleRowCount);
+        }
+
+        //--------------------------------modal--------------------------------------------
+        document.addEventListener('DOMContentLoaded', function () {
+                const editButtons = document.querySelectorAll('.edit-button');
+
+                editButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const dataId = button.getAttribute('data-id');
+                        const editModal = document.getElementById(`editModal-${dataId}`);
+                        const editForm = document.getElementById(`editForm-${dataId}`);
+
+                        // Open the modal
+                        editModal.style.display = 'block';
+
+                        // Handle the close button within the modal
+                        const closeModal = document.getElementById(`closeModal-${dataId}`);
+                        closeModal.addEventListener('click', function () {
+                            editModal.style.display = 'none';
+                        });
+
+                    });
+                });
+
+            });
+
+        //-------------------- export file --------------------------
+
+        function exportFile() {
+            const table = document.querySelector('table');
+
+            const headerRow = [];
+            const thCells = table.querySelectorAll('thead th');
+            thCells.forEach(thCell => {
+                headerRow.push(thCell.textContent.trim());
+            });
+
+            const validRows = table.querySelectorAll('tbody tr');
+            const csvContent = [];
+
+            validRows.forEach(row => {
+                if (row.style.display !== 'none') { 
+                    const rowData = Array.from(row.cells).map(cell => `"${cell.textContent.trim()}"`);
+                    csvContent.push(rowData.join(','));
+                }
+            });
+
+            const csvString = [headerRow.join(',')].concat(csvContent).join('\n');
+
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'userlist.csv';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        //--------------------------- delete selected user -----------------------------------
+
+        function checkAllBoxes(){
+            const checkboxes = document.querySelectorAll(".delete-checkbox");
+            const mainbox = document.querySelector(".mainbox");
+
+            if(mainbox.checked){
+                document.getElementById("deleteSelectedBtn").style.display = "block";  
+                checkboxes.forEach(function(checkbox){
+                    checkbox.checked = true;
+                })
+            }
+            else
+            {
+                document.getElementById("deleteSelectedBtn").style.display = "none";  
+                checkboxes.forEach(function(checkbox){
+                    checkbox.checked = false;
+                })
+            }
+        
+        }
+        function showDeleteBtn(){
+            const checkboxes = document.querySelectorAll(".delete-checkbox"); 
+            const isAnyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            const mainbox = document.querySelector(".mainbox");
+
+            if(!isAnyCheckboxChecked){
+                console.log(isAnyCheckboxChecked);
+                document.getElementById("deleteSelectedBtn").style.display = "none";
+                mainbox.checked = false;  
+            }
+            else{
+                console.log(isAnyCheckboxChecked);
+                document.getElementById("deleteSelectedBtn").style.display = "block";  
+            }
+        }
+
+
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
+            const idsToDelete = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-id'));
+            
+            fetch('/deleteusers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ids: idsToDelete }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    }
+                } else {
+                    console.log('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting data:', error);
+            });
+        }
+
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        deleteSelectedBtn.addEventListener('click', deleteSelected);
+
+
+        //------------------------------- count rows ----------------------------------------
+        function updateRowCount(count) {
+            document.getElementById('rowCountNumber').textContent = count;
+        }
+      
+    </script>
+</body>
+</html>

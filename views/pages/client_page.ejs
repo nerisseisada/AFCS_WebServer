@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body class="body-data" >
+    <header>
+        <%- include('../partials/header_client') %>
+    </header>
+    <main class="container-fluid">
+        <div style="margin-top:10%"></div>
+
+        <div class="index-h">
+            <div class="index-top d-flex align-items-center">
+                <div class="me-auto">
+                    <h2>AFCS TRANSCATIONS</h2>
+                </div>
+                <a href="#" id="filter" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+                 <i class="fa-solid fa-filter"></i> Filter
+                 </a>
+                <button id="exportButton" onclick="exportFile()"><i class="fa-solid fa-file-csv"></i> Export</button>  
+            </div>
+            <div class="index-bottom d-flex align-items-center" >
+                 <div class="me-auto d-flex align-items-center search">
+                     <form action="/search" method="GET" style="width: 99%">
+                         <i class="fa fa-search" aria-hidden="true"></i><input type="text" name="search" placeholder="Search..." class="search-bar">
+                     </form>
+                 </div>
+                 <button id="syncButton" onclick="fetchUpdates()"><i class="fa-solid fa-sync"></i>Refresh</button>  
+ 
+            </div>
+              
+        </div>
+    
+        
+        <div class="index-container">
+            <!-- <p class="number_rows">Number of Rows: <span id="rowCountNumber"></span></p>  -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tap-in DateTime
+                                <!-- <a onclick="sortTableAlphabetically(1)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Tap-out DateTime
+                                <!-- <a onclick="sortTableAlphabetically(2)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Tap-in Latitude
+                                <!-- <a onclick="sortTableAlphabetically(3)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Tap-in Longitude
+                                <!-- <a onclick="sortTableAlphabetically(4)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Tap-out Latitude
+                                <!-- <a onclick="sortTableAlphabetically(5)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Tap-out Longitude
+                                <!-- <a onclick="sortTableAlphabetically(6)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Cost
+                                <!-- <a onclick="sortTableAlphabetically(7)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Distance
+                                <!-- <a onclick="sortTableAlphabetically(8)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Card ID
+                                <!-- <a onclick="sortTableAlphabetically(9)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Bus Number
+                                <!-- <a onclick="sortTableAlphabetically(10)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Operator Account Name
+                                <!-- <a onclick="sortTableAlphabetically(11)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Status
+                                <!-- <a onclick="sortTableAlphabetically(12)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Balance
+                                <!-- <a onclick="sortTableAlphabetically(13)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                            <th>Discount
+                                <!-- <a onclick="sortTableAlphabetically(14)"><i class="fa fa-sort"></i></a> -->
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <% data.forEach(function(data) { %>
+                            <tr>
+                                <td><%= data.sDT %></td>
+                                <td><%= data.eDT %></td>
+                                <td><%= data.sLat %></td>
+                                <td><%= data.sLon %></td>
+                                <td><%= data.eLat %></td>
+                                <td><%= data.eLon %></td>
+                                <td><%= data.cost %></td>
+                                <td><%= data.distance %></td>
+                                <td><%= data.cardid %></td>
+                                <td><%= data.busNum %></td>
+                                <td><%= data.admin %></td>
+                                <td><%= data.status %></td>
+                                <td><%= data.balance %></td>
+                                <td><%= data.discount %></td>
+                            </tr>
+                        
+                        <%}); %>
+                        
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+        <div style="margin-left: 5%; margin-right: 5%;">
+            <p style="font-size: 22px; font-weight: 500; color: #050505ab;"><span id="rowCountNumber" ></span> Rows</p>
+        </div>
+    </main>
+
+    
+    <footer>
+        <%- include('../partials/footer') %>
+    </footer>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header d-flex bd-highlight vertical-center">
+            <div class="me-auto bd-highlight d-flex">
+                <h3 id="offcanvasRightLabel" style="white-space: nowrap;" >Filter Transaction Details </h3>
+                <button class="fetch-sync ml-3" onclick="resetFilter()"><i class="fas fa-sync" style="font-size: 18px; color: #A02EA2; "></i></button>
+                
+            </div>
+            <div class="p-2 bd-highlight">
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="offcanvas-body">
+            <div >
+                <h5 style="margin-bottom: 3%;">Search Info</h5>
+                <div class="form-group mr-5">
+                    <label for="admin">Operator Account Name</label>
+                    <input type="text" class="form-control" id="admin" placeholder="Search Admin">
+                </div>
+                <div class="form-group">
+                    <label for="busNum">Bus Number</label>
+                    <input type="text" class="form-control" id="busNum" placeholder="Search Bus Number">
+                </div>
+                <div class="form-group" style="margin-bottom: 3%;">
+                    <label for="cardid">Card ID</label>
+                    <input type="text" class="form-control" id="cardid" placeholder="Search Card ID">
+                </div>
+                
+                <!-- <h4 style="margin-bottom: 3%; margin-top: 3%;">Registrant Details</h4> -->
+
+                <div class="about-section">
+                    <h5>Passenger Type</h5>
+                    <div class="form-check">
+                        <input type="checkbox" id="regularCheckbox">
+                        <label class="form-check-label" for="regularCheckbox">
+                          Regular
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="discountedCheckbox" >
+                        <label class="form-check-label" for="discountedCheckbox">
+                          Discounted Passenger
+                        </label>
+                    </div>
+                </div>
+
+                <div class="about-section">
+                    <h5>Tap-in Date</h5>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>From</label>
+                            <input type="text" class="form-control" id="startTapinDate" placeholder="Select date">
+                        </div>
+                        <div class="form-group col-6">
+                            <label>To</label>
+                            <input type="text" class="form-control" id="endTapinDate" placeholder="Select date">
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="about-section">
+                    <h5>Tap-out Transaction Date</h5>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>From</label>
+                            <input type="text" class="form-control" id="startTapoutDate" placeholder="Select date">
+                        </div>
+                        <div class="form-group col-6">
+                            <label>To</label>
+                            <input type="text" class="form-control" id="endTapoutDate" placeholder="Select date">
+                        </div>
+                    </div>
+                    
+                </div>
+        
+                <button class="submitbtn " onclick="filterTable()" data-bs-dismiss="offcanvas" >Submit</button>
+        </div>
+    </div>
+    
+    
+    <script>
+
+    // --------------------- filter -------------------------------
+
+    var submitClicked = false;
+
+    const startTapindatePicker = flatpickr("#startTapinDate", {
+        dateFormat: "H:i:S_Y-m-d",
+        defaultDate: null,
+    });
+
+    const endTapindatePicker = flatpickr("#endTapinDate", {
+        dateFormat: "H:i:S_Y-m-d",
+        defaultDate: null,
+    });
+
+    const startTapoutdatePicker = flatpickr("#startTapoutDate", {
+        dateFormat: "H:i:S_Y-m-d",
+        defaultDate: null,
+    });
+
+    const endTapoutdatePicker = flatpickr("#endTapoutDate", {
+        dateFormat: "H:i:S_Y-m-d",
+        defaultDate: null,
+    });
+
+
+    function parseCustomDate(customDate) {
+        var parts = customDate.split('_');
+        var timePart = parts[0];
+        var datePart = parts[1];
+
+        var timeComponents = timePart.split(':');
+        var hours = parseInt(timeComponents[0]);
+        var minutes = parseInt(timeComponents[1]);
+        var seconds = parseInt(timeComponents[2]);
+
+        var dateComponents = datePart.split('-');
+        var year = parseInt(dateComponents[0]);
+        var month = parseInt(dateComponents[1]) - 1; // Month is zero-based
+        var day = parseInt(dateComponents[2]);
+
+        return new Date(year, month, day, hours, minutes, seconds);
+    }
+
+    function filterTable() {
+
+        var visibleRowCount = 0;
+
+        var adminInput = document.getElementById('admin').value.toLowerCase();
+        var busNumInput = document.getElementById('busNum').value.toLowerCase();
+        var cardidInput = document.getElementById('cardid').value.toLowerCase();
+
+        const startDateTapin = startTapindatePicker.selectedDates.length > 0 ? startTapindatePicker.selectedDates[0] : null;
+        let endDateTapin = endTapindatePicker.selectedDates.length > 0 ? endTapindatePicker.selectedDates[0] : null;
+
+        const startDateTapout = startTapoutdatePicker.selectedDates.length > 0 ? startTapoutdatePicker.selectedDates[0] : null;
+        let endDateTapout = endTapoutdatePicker.selectedDates.length > 0 ? endTapoutdatePicker.selectedDates[0] : null;
+
+        if (endDateTapin === null) {
+            endDateTapin = new Date();
+            endDateTapin.setHours(23, 59, 59, 999);
+        } else {
+            endDateTapin = new Date(endDateTapin.getFullYear(), endDateTapin.getMonth(), endDateTapin.getDate(), 23, 59, 59, 999);
+        }
+
+        if (endDateTapout === null) {
+            endDateTapout = new Date();
+            endDateTapout.setHours(23, 59, 59, 999);
+        } else {
+            endDateTapout = new Date(endDateTapout.getFullYear(), endDateTapout.getMonth(), endDateTapout.getDate(), 23, 59, 59, 999);
+        }
+
+        var passengerTypeCheckboxes = {
+            "regularCheckbox": document.getElementById("regularCheckbox"),
+            "discountCheckbox": document.getElementById("discountedCheckbox")
+        };
+
+        var rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(function (row) {
+            var cells = row.getElementsByTagName('td');
+            var adminText = cells[10].textContent.toLowerCase();
+            var busNumText = cells[9].textContent.toLowerCase();
+            var cardidText = cells[8].textContent.toLowerCase();
+            var tapinDateCell = cells[0];
+            var tapoutDateCell = cells[1];
+            var discountText = cells[13].textContent; // Assuming discount is in the 15th column (index 14)
+
+            var dateColumnTapin = tapinDateCell.textContent ? parseCustomDate(tapinDateCell.textContent) : null;
+            var dateColumnTapout = tapoutDateCell.textContent ? parseCustomDate(tapoutDateCell.textContent) : null;
+
+            const startDateTapinTime = startDateTapin ? startDateTapin.getTime() : 0;
+            const endDateTapinTime = endDateTapin ? endDateTapin.getTime() : 0;
+
+            const startDateTapoutTime = startDateTapout ? startDateTapout.getTime() : 0;
+            const endDateTapoutTime = endDateTapout ? endDateTapout.getTime() : 0;
+
+            const withinDateRangeIn = (
+                endDateTapin === null ||
+                (dateColumnTapin && (dateColumnTapin >= startDateTapin && dateColumnTapin <= endDateTapin))
+            );
+
+            const withinDateRangeOut = (
+                endDateTapout === null ||
+                (dateColumnTapout && (dateColumnTapout >= startDateTapout && dateColumnTapout <= endDateTapout))
+            );
+
+            var passengerTypeChecked = (
+                (passengerTypeCheckboxes["discountCheckbox"].checked && discountText.trim() !== '0') ||
+                (passengerTypeCheckboxes["regularCheckbox"].checked && discountText.trim() === '0')
+            );
+
+            const passengerTypeCategoryChecked = Object.values(passengerTypeCheckboxes).some(checkbox => checkbox.checked);
+
+            const matchesSearchInput = (
+                (adminInput && adminText !== adminInput) ||
+                (busNumInput && busNumText !== busNumInput) ||
+                (cardidInput && cardidText !== cardidInput) ||
+                (passengerTypeCategoryChecked && !passengerTypeChecked)
+            );
+
+
+            if (((withinDateRangeIn && withinDateRangeOut) && !matchesSearchInput) || (withinDateRangeIn && withinDateRangeOut && !matchesSearchInput)) {
+                row.style.display = '';
+                visibleRowCount++;
+            } else {
+                row.style.display = 'none';
+            }
+
+        });
+
+
+        updateRowCount(visibleRowCount);
+    }
+
+    //---------------------- reset filter -------------------------
+
+    function resetFilter() {
+
+    var visibleRowCount = 0;
+
+    document.getElementById('admin').value = '';
+    document.getElementById('busNum').value = '';
+    document.getElementById('cardid').value = '';
+    document.getElementById('startTapinDate').value = '';
+    document.getElementById('endTapinDate').value = '';
+    document.getElementById('startTapoutDate').value = '';
+    document.getElementById('endTapoutDate').value = '';
+
+    document.getElementById('regularCheckbox').checked = false;
+    document.getElementById('discountedCheckbox').checked = false;
+
+
+    const submitbtn = document.querySelector('.submitbtn').addEventListener('click', function(){
+        const empty = (
+        (document.getElementById('admin').value === '') &&
+        (document.getElementById('busNum').value === '') &&
+        (document.getElementById('cardid').value === '') &&
+        (document.getElementById('startTapinDate').value === '') &&
+        (document.getElementById('endTapinDate').value === '') &&
+        (document.getElementById('startTapoutDate').value === '') &&
+        (document.getElementById('endTapoutDate').value === '') &&
+
+        (document.getElementById('regularCheckbox').checked === false) &&
+        (document.getElementById('discountedCheckbox').checked === false)
+    )
+    
+        
+        if (empty){
+            const rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach((data)=>{
+                data.style.display = '';
+                visibleRowCount++;
+            });
+
+            visibleRowCount = rows.length; 
+            updateRowCount(visibleRowCount);
+        }
+    });
+
+
+    updateRowCount(visibleRowCount);
+
+
+    }
+
+
+    // --------------------- row count ----------------------------
+    function updateRowCount(count) {
+    document.getElementById('rowCountNumber').textContent = count;
+    }
+
+    //--------------------- sync data -----------------------------
+    function fetchUpdates() {
+        fetch('/getdata')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json(); 
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (typeof data === 'string') {
+                    displayUpdatedData(data);
+                } else {
+                    updateTableContent(data);
+                }
+
+                //row count
+                const rowCount = document.querySelectorAll('#tableBody tr').length;
+                updateRowCount(rowCount);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    function displayUpdatedData(data) {
+        document.querySelector('.body-data').innerHTML = '';
+        document.querySelector('.body-data').innerHTML = data;
+    }
+
+    // initial row count
+    const rowCount = document.querySelectorAll('#tableBody tr').length;
+    updateRowCount(rowCount);
+
+    //-------------------- export file --------------------------
+
+    function exportFile() {
+        const table = document.querySelector('table');
+
+        const headerRow = [];
+        const thCells = table.querySelectorAll('thead th');
+        thCells.forEach(thCell => {
+            headerRow.push(thCell.textContent.trim());
+        });
+
+        const validRows = table.querySelectorAll('tbody tr');
+        const csvContent = [];
+
+        validRows.forEach(row => {
+            if (row.style.display !== 'none') { 
+                const rowData = Array.from(row.cells).map(cell => `"${cell.textContent.trim()}"`);
+                csvContent.push(rowData.join(','));
+            }
+        });
+
+        const csvString = [headerRow.join(',')].concat(csvContent).join('\n');
+
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'transactions.csv';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    </script>
+   
+</body>
+</html>

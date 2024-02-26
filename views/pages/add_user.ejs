@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <header>
+        <%- include('../partials/header') %>
+        
+    </header>
+    <main class="admin-cont">
+        <div class="sidebar">
+            <a id="addUserBtn" class="active" href="/adduser" ><i class="fa-solid fa-user-plus"></i> Add User</a>
+            <a id="userListBtn" href="/userlist"  ><i class="fa-solid fa-users"></i> User List</a>
+        </div>
+        <div class="sidebar-small">
+            <a id="addUserBtn" class="active" href="/adduser" ><i class="fa-solid fa-user-plus"></i></a>
+            <a id="userListBtn" href="/userlist"  ><i class="fa-solid fa-users"></i></a>
+        </div>
+        <div class="second-nav">
+            <div class="nav2">
+                <h5> <span><a href="/adduser"> Admin</a></span> <span style="font-weight: 600;">></span> Add user</h5>
+                <div class="nav2-bottom" style="display: flex; align-items: center;">
+                    <div class="nav2-title me-auto">
+                        <h1> User Details</h1>
+                    </div>
+                    <div class="nav2-import mt-2 ">
+                        <a href="/import-registrant" class="mid-screen"><i class="fa fa-plus me-2" aria-hidden="true"  style="font-size: 15px;"></i>Import Users</a>
+                        <a href="/import-registrant" class="small-screen"><i class="fa fa-plus me-2" aria-hidden="true"  style="font-size: 15px;"></i>Import</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="content">
+            <div id="addUser">
+                <div class="cont" style="background-color: white; padding: 2%; border-radius: 10px;">
+                    <% if (success && success.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+                    <form class="add-form" action="/adduserform" method="POST">
+                        <div style="padding: 0 3%">
+                            <div class="add mb-2">
+                                <label for="id" class="form-label">Company ID</label>
+                                <input type="text" class="form-control" id="id" name="id" style="text-transform:uppercase">
+                                <p class="text-danger"><%= error %></p>
+                            </div>
+                            <div class="add mb-2">
+                              <label for="user" class="form-label">Email address</label>
+                              <input type="email" class="form-control" id="user" name="user">
+                            </div>
+                            <div class="add mb-2">
+                              <label for="pwd" class="form-label">Password</label>
+                              <input type="password" class="form-control" id="pwd" name="pwd" oninput="showCpwd()" >
+                              <p class="text-danger"><%= notmatch %></p>
+                            </div>
+                            <div class="add cpress mb-3" style="display: none;">
+                                <label for="cpwd" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="cpwd" name="cpwd" >
+                                <p class="text-danger"><%= notmatch %></p>
+                            </div>
+                            <div class="add-show mb-3" style="font-size: 18px; display: flex; align-items: center;">
+                                <input type="checkbox" onclick="showpass()" style="margin-right: 2%;"> Show Password
+                            </div>
+                            <button type="submit" class="add-submit">Submit</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+    <%- include('../partials/footer') %>
+    <script>
+
+        //--------------------------------- change sidebar --------------------------------
+
+        if(window.screen.width <= 600) {
+            document.querySelector(".sidebar").style.display = "none";
+            document.querySelector(".sidebar-small").style.display = "block";
+        }
+        
+        //--------------------------show confirm pwd-----------------------------
+        const showCpwd=()=>{
+            document.querySelector(".cpress").style.display = "block";
+        }
+
+        //------------------------- show password -------------------------------
+        const showpass = () =>{
+            const cpwd = document.getElementById("cpwd");
+            const pwd = document.getElementById("pwd");
+
+            if(cpwd.type === "password" || pwd.type === "password" ){
+                cpwd.type = "text";
+                pwd.type = "text";
+            }
+            else{
+                cpwd.type = "password";
+                pwd.type = "password";
+            }
+           
+        }
+    </script>
+</body>
+</html>
